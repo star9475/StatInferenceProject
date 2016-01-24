@@ -1,5 +1,5 @@
 ---
-title: "StatInfProject - Coursera"
+title: "Statistical Inference Project - Coursera"
 author: "Josh Starkey"
 date: "January 31, 2016"
 output: html_document
@@ -8,11 +8,43 @@ output: html_document
 ##Overview
 This project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem.   
 
+First, let's load libraries
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+```
+
 ##Part 1
 
 ###Simulations
+Let's run the simulation of an exponential distribution with lambda = .2.
+
+The expected mean of the distribution is 1/lambda.
+```{r}
+expmean <- 1 / .2
+expmean
+```
+
+Now let's perform 1000 simulations of the exponential distribution.  We'll set the seed for reproducability.  
+```{r, cache = TRUE, warning=FALSE,message=FALSE}
+set.seed(1623); mns = NULL; 
+for (i in 1 : 1000) mns = c(mns, mean(rexp(40,.2))); 
+```
+
+```{r, cache = TRUE, warning=FALSE,message=FALSE, echo=FALSE}
+p <- qplot(mns,
+       geom="histogram",
+       main = "Average Means of 40 Samples",
+       xlab = "Means",
+       fill=I("blue"),
+       col=I("darkgreen"),
+       alpha=I(.2)
+ )
+p + geom_vline(xintercept=5)
+```
 
 ###Sample Mean versus Theoretical Mean
+
+I've added a vertical line at x = expmean = 5
 
 ###Sample Variance versus Theoretical Variance
 
@@ -28,15 +60,3 @@ This project you will investigate the exponential distribution in R and compare 
 
 ###State your conclusions and the assumptions needed for your conclusions
 
-
-```{r}
-summary(cars)
-```
-
-You can also embed plots, for example:
-
-```{r, echo=FALSE}
-plot(cars)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
