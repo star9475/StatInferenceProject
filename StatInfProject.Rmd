@@ -1,0 +1,42 @@
+---
+title: "StatInfProject - Coursera"
+author: "Josh Starkey"
+date: "January 24, 2016"
+output: html_document
+---
+
+##Overview
+This project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem.   
+
+##Part 1
+
+###Simulations
+
+###Sample Mean versus Theoretical Mean
+
+###Sample Variance versus Theoretical Variance
+
+###Distribution
+
+##Part 2
+
+###Load the ToothGrowth data and perform some basic exploratory data analyses
+
+###Provide a basic summary of the data
+
+###Use confidence intervals and/or hypothesis tests to compare tooth growth
+
+###State your conclusions and the assumptions needed for your conclusions
+
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
