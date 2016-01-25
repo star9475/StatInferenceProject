@@ -122,6 +122,4 @@ summary(aov(len ~ supp * dose, data=ToothGrowth))
 ```
 ####State your conclusions and the assumptions needed for your conclusions
 
-We have conducted an analysis on the Tooth Growth dataset in R. We did an exploratory analysis and run some tests on The Effect of Vitamin C on Tooth Growth in Guinea Pigsin R. Our multiple t.tests use the variables len as a response variable and dose for grouping variable. There appears to be a main effect of supplement(F(1,54)=15.572; p<.01) and dose (F(2,54)=92.0) that is the difference between at least 2 of the means. There is also an interaction between them (F(2,54)=4,107;p<.05). The confidence interval’s default value is 0.95.
-
-We assume that the distribution of the sample means is normal, the sampling distribution of the mean is normal in both groups, and we also assume equal variances in the populations. We can run tests in R to check for equal variances and visualize our data in more than one way to show the results. To further test the normality of data is possible in R, as shown in the lectures.
+Analysis here
