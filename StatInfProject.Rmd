@@ -5,7 +5,7 @@ date: "January 31, 2016"
 output: html_document
 ---
 
-##Overview
+###Overview
 This project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem.   
 
 First, let's load libraries
@@ -13,9 +13,9 @@ First, let's load libraries
 library(ggplot2)
 ```
 
-##Part 1
+###Part 1
 
-###Simulations
+####Simulations
 Let's run the simulation of an exponential distribution with lambda = .2.
 
 The expected mean of the distribution is 1/lambda.
@@ -23,40 +23,105 @@ The expected mean of the distribution is 1/lambda.
 expmean <- 1 / .2
 expmean
 ```
-
-Now let's perform 1000 simulations of the exponential distribution.  We'll set the seed for reproducability.  
+The expected variance of the distribution is also 1/lambda.
+```{r}
+expvar <- ((1 / .2)^2)
+expvar
+```
+The number of simulations for the experiment is 1000
+The number of samples is 40
+```{r}
+nosim <- 1000
+nosample <- 40
+```
+Let's perform 1000 simulations of the exponential distribution.  We'll set the seed for reproducability.  
 ```{r, cache = TRUE, warning=FALSE,message=FALSE}
-set.seed(1623); mns = NULL; 
-for (i in 1 : 1000) mns = c(mns, mean(rexp(40,.2))); 
+set.seed(1623);
+meandata <- data.frame(
+     x = c(apply(matrix(rexp(nosim * nosample, .2), nosim), 1, mean)),
+     n = factor(rep(c(nosample), c(nosample))) 
+     )
 ```
 
 ```{r, cache = TRUE, warning=FALSE,message=FALSE, echo=FALSE}
-p <- qplot(mns,
-       geom="histogram",
-       main = "Average Means of 40 Samples",
-       xlab = "Means",
-       fill=I("blue"),
-       col=I("darkgreen"),
-       alpha=I(.2)
- )
-p + geom_vline(xintercept=5)
+g <- ggplot(data = meandata, aes(x = x) ) +
+     geom_histogram(aes(y = ..density..), fill = ("blue"), col=("darkgreen"), alpha=.4) +
+     labs(title ="Average Means of 40 Samples", x="means") +
+     geom_vline(xintercept=expmean)
+g
 ```
 
-###Sample Mean versus Theoretical Mean
+Let's perform 1000 simulations of the exponential distribution.  We'll set the seed for reproducability.  
+```{r, cache = TRUE, warning=FALSE,message=FALSE}
+set.seed(1623);
+vardata <- data.frame(
+     x = c(apply(matrix(rexp(nosim * nosample, .2), nosim), 1, var)),
+     n = factor(rep(c(nosample), c(nosample))) 
+     )
+```
+
+```{r, cache = TRUE, warning=FALSE,message=FALSE, echo=FALSE}
+g <- ggplot(data = vardata, aes(x = x) ) +
+     geom_histogram(aes(y = ..density..), fill = ("blue"), col=("darkgreen"), alpha=.4) +
+     labs(title ="Average Vars of 40 Samples", x="Vars") +
+     geom_vline(xintercept=expvar)
+g
+```
+
+####Sample Mean versus Theoretical Mean
 
 I've added a vertical line at x = expmean = 5
 
-###Sample Variance versus Theoretical Variance
+####Sample Variance versus Theoretical Variance
 
-###Distribution
+I've added a vertical line at x = expvar = 25
 
-##Part 2
+####Distribution
 
-###Load the ToothGrowth data and perform some basic exploratory data analyses
+###Part 2
 
-###Provide a basic summary of the data
+####Load the ToothGrowth data and perform some basic exploratory data analyses
+```{r ,cache = TRUE}
+data("ToothGrowth")
 
-###Use confidence intervals and/or hypothesis tests to compare tooth growth
+head(ToothGrowth)
 
-###State your conclusions and the assumptions needed for your conclusions
+str(ToothGrowth)
 
+```
+
+####Provide a basic summary of the data
+Use the summary command to print a summary
+```{r}
+summary(ToothGrowth)
+```
+The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, (orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+
+A data frame with 60 observations on 3 variables.
+
+[,1]	len	numeric	Tooth length
+[,2]	supp	factor	Supplement type (VC or OJ).
+[,3]	dose	numeric	Dose in milligrams/day
+
+```{r,cache = TRUE, echo=FALSE, warning=FALSE, message=FALSE}
+p <- ggplot(data = ToothGrowth, aes(x=dose,y=len )) + 
+     geom_point() +facet_wrap(~supp) + geom_smooth() 
+p
+```
+
+####Use confidence intervals and/or hypothesis tests to compare tooth growth
+
+Perform a paired t-test
+```{r, cache=TRUE}
+with(ToothGrowth, pairwise.t.test(len, dose))
+```
+
+Perform an analysis of the variance
+```{r,cache = TRUE}
+summary(aov(len ~ supp * dose, data=ToothGrowth))
+```
+####State your conclusions and the assumptions needed for your conclusions
+
+We have conducted an analysis on the Tooth Growth dataset in R. We did an exploratory analysis and run some tests on The Effect of Vitamin C on Tooth Growth in Guinea Pigsin R. Our multiple t.tests use the variables len as a response variable and dose for grouping variable. There appears to be a main effect of supplement(F(1,54)=15.572; p<.01) and dose (F(2,54)=92.0) that is the difference between at least 2 of the means. There is also an interaction between them (F(2,54)=4,107;p<.05). The confidence interval’s default value is 0.95.
+
+We assume that the distribution of the sample means is normal, the sampling distribution of the mean is normal in both groups, and we also assume equal variances in the populations. We can run tests in R to check for equal variances and visualize our data in more than one way to show the results. To further test the normality of data is possible in R, as shown in the lectures.
