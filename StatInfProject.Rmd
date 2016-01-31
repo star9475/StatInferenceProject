@@ -1,14 +1,14 @@
 ---
-title: "Statistical Inference Project - Coursera"
+title: "Coursera Statistical Inference Project"
 author: "Josh Starkey"
 date: "January 31, 2016"
-output: html_document
+output: pdf_document
 ---
 
 ###Overview
-This project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem.   
+This is a Coursera project for the Data Science Specialization: Statisical Inference Course.  The project is described https://www.coursera.org/learn/statistical-inference/peer/3k8j5/statistical-inference-course-project.  This project has two parts.  The first part investigates the exponential distribution in R and compares it with the Central Limit Theorem.  The second part performs some basic analysis on the ToothGrowth data provided by R.  This report is uploaded as a pdf, but the R Markdown is located https://github.com/star9475/StatInferenceProject/blob/master/StatInfProject.Rmd.
 
-First, let's load libraries
+First, let's load libraries:
 ```{r, warning=FALSE, message=FALSE}
 library(ggplot2)
 ```
@@ -16,25 +16,29 @@ library(ggplot2)
 ###Part 1
 
 ####Simulations
-Let's run the simulation of an exponential distribution with lambda = .2.
+Let's run a simulation of an exponential distribution with lambda = .2.
 
 The expected mean of the distribution is 1/lambda.
 ```{r}
 expmean <- 1 / .2
+```
+```{r, echo=FALSE}
 expmean
 ```
 The expected variance of the distribution is also 1/lambda.
 ```{r}
 expvar <- ((1 / .2)^2)
+```
+```{r, echo=FALSE}
 expvar
 ```
-The number of simulations for the experiment is 1000
-The number of samples is 40
+The number of simulations for the experiment is 1000.<br>
+The number of samples is 40.
 ```{r}
 nosim <- 1000
 nosample <- 40
 ```
-Let's perform 1000 simulations of the exponential distribution.  We'll set the seed for reproducability.  
+Let's perform 1000 simulations of the exponential distribution, and take 40 samples of each simulation.  We'll set the seed for reproducability.  
 ```{r, cache = TRUE, warning=FALSE,message=FALSE}
 set.seed(1623);
 meandata <- data.frame(
@@ -43,15 +47,7 @@ meandata <- data.frame(
      )
 ```
 
-```{r, cache = TRUE, warning=FALSE,message=FALSE, echo=FALSE}
-g <- ggplot(data = meandata, aes(x = x) ) +
-     geom_histogram(aes(y = ..density..), fill = ("blue"), col=("darkgreen"), alpha=.4) +
-     labs(title ="Average Means of 40 Samples", x="means") +
-     geom_vline(xintercept=expmean)
-g
-```
-
-Let's perform 1000 simulations of the exponential distribution.  We'll set the seed for reproducability.  
+Let's perform the same simulation: 1000 simulations of the exponential distribution.  This time we'll calculate the variance of the samples.  We'll set the seed for reproducability.  
 ```{r, cache = TRUE, warning=FALSE,message=FALSE}
 set.seed(1623);
 vardata <- data.frame(
@@ -60,23 +56,32 @@ vardata <- data.frame(
      )
 ```
 
-```{r, cache = TRUE, warning=FALSE,message=FALSE, echo=FALSE}
-g <- ggplot(data = vardata, aes(x = x) ) +
+####Sample Mean versus Theoretical Mean
+
+We plot the distribution of sample means.  The red line represents the expected mean <code>expmean = 5</code>, and the green line represents the sample mean<code>sampmean = mean(meandata[,1])=5.011907</code>.  They are very close.<br>
+```{r,  fig.align="left", cache = TRUE, warning=FALSE,message=FALSE, echo=FALSE}
+g <- ggplot(data = meandata, aes(x = x) ) +
      geom_histogram(aes(y = ..density..), fill = ("blue"), col=("darkgreen"), alpha=.4) +
-     labs(title ="Average Vars of 40 Samples", x="Vars") +
-     geom_vline(xintercept=expvar)
+     labs(title ="Average Means of 40 Samples", x="means") +
+     geom_vline(xintercept=expmean, color="red") +
+     geom_vline(xintercept=mean(meandata[,1]), color="green")
 g
 ```
 
-####Sample Mean versus Theoretical Mean
-
-I've added a vertical line at x = expmean = 5
-
 ####Sample Variance versus Theoretical Variance
 
-I've added a vertical line at x = expvar = 25
+We plot the distribution of sample variances.  The red line represents the expected variance <code>expvar = 25</code>, and the green line represents the sample variance<code>sampvar = mean(vardata[,1])=24.91826</code>.  They are very close.<br>
+```{r, fig.align="left", cache = TRUE, warning=FALSE,message=FALSE, echo=FALSE}
+g <- ggplot(data = vardata, aes(x = x) ) +
+     geom_histogram(aes(y = ..density..), fill = ("blue"), col=("darkgreen"), alpha=.4) +
+     labs(title ="Average Vars of 40 Samples", x="Vars") +
+     geom_vline(xintercept=expvar, color="red") + 
+     geom_vline(xintercept=mean(vardata[,1]), color="green")
+g
+```
 
 ####Distribution
+The Central Limit Theorm states that averages are approximately normal with distributions centered at the population mean, which we have shown in the first figure "Average Means of 40 samples".  
 
 ###Part 2
 
@@ -95,25 +100,26 @@ Use the summary command to print a summary
 ```{r}
 summary(ToothGrowth)
 ```
-The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, (orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+ToothGrowth is a dataframe with 60 observations on 3 variables. <br>
 
-A data frame with 60 observations on 3 variables.
-
-[,1]	len	numeric	Tooth length
-[,2]	supp	factor	Supplement type (VC or OJ).
-[,3]	dose	numeric	Dose in milligrams/day
+Let's chart the dose given and the length of tooth growth.
 
 ```{r,cache = TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 p <- ggplot(data = ToothGrowth, aes(x=dose,y=len )) + 
-     geom_point() +facet_wrap(~supp) + geom_smooth() 
+     geom_point() +facet_wrap(~supp) + geom_smooth() +
+     labs(title ="ToothGrowth Factored by Supplement Type")
 p
 ```
 
 ####Use confidence intervals and/or hypothesis tests to compare tooth growth
 
-Perform a paired t-test
+Perform a t-test to compare the length of the growth with the supplement.
 ```{r, cache=TRUE}
-with(ToothGrowth, pairwise.t.test(len, dose))
+t.test(len ~ supp, paired = FALSE,  data = ToothGrowth)
+```
+Perform a t-test to compare the length of the growth with the dose given.
+```{r}
+t.test(ToothGrowth$len , ToothGrowth$dose)
 ```
 
 Perform an analysis of the variance
@@ -122,4 +128,6 @@ summary(aov(len ~ supp * dose, data=ToothGrowth))
 ```
 ####State your conclusions and the assumptions needed for your conclusions
 
-Analysis here
+The results for the analysis of length and the supplement show that the t-statistic is equal to 1.91 and the p-value is 0.06063. Since the p-value is very low, there is strong evidence of a mean increase in tooth length between the OJ and VC supplement.
+
+The results for teh analysis of the length and the dose size show a large t statistic and a p value of almost zero.  This shows little significance between these two measures.
